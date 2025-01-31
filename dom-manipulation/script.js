@@ -237,6 +237,12 @@ createAddQuoteForm();
 // Show an initial random quote when the page loads
 showRandomQuote();
 
+// On God
+// ["method", "POST", "headers", "Content-Type"]
+
+
+
+
 
 
 // // Task 2
