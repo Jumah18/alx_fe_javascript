@@ -1,17 +1,23 @@
-// Define an array to store quote objects
-let quotes = [
-    { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", category: "inspirational" },
-    { text: "The way to get started is to quit talking and begin doing.", category: "motivational" },
-    { text: "Life is what happens when you're busy making other plans.", category: "life" },
-    { text: "You only live once, but if you do it right, once is enough.", category: "life" }
-];
+// Task 1
+// Define an array to store quote objects, load initial quotes from localStorage
+let quotes = JSON.parse(localStorage.getItem('quotes')) || [];
+
+
+// Function to save quotes to local storage
+function saveQuotes() {
+    localStorage.setItem('quotes', JSON.stringify(quotes));
+}
 
 // Function to display a random quote
 function showRandomQuote() {
     const quoteDisplay = document.getElementById('quoteDisplay');
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const randomQuote = quotes[randomIndex];
-    quoteDisplay.innerHTML = `<p>"${randomQuote.text}"</p><p><em>- ${randomQuote.category}</em></p>`;
+    
+    // Save last viewed quote in session storage
+    sessionStorage.setItem('lastViewedQuote', JSON.stringify(randomQuote));
+    
+    quoteDisplay.innerHTML = `<p>"${randomQuote ? randomQuote.text : "No quotes available"}"</p><p><em>- ${randomQuote ? randomQuote.category : ""}</em></p>`;
 }
 
 // Function to create a form to add a new quote
@@ -22,6 +28,8 @@ function createAddQuoteForm() {
         <input type="text" id="quoteText" placeholder="Enter your quote" required>
         <input type="text" id="quoteCategory" placeholder="Enter category" required>
         <button id="addQuote">Add Quote</button>
+        <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+        <button id="exportQuotes">Export Quotes to JSON</button>
     `;
     
     document.body.appendChild(formContainer);
@@ -34,6 +42,7 @@ function createAddQuoteForm() {
         if (quoteText && quoteCategory) {
             // Add the new quote to the quotes array
             quotes.push({ text: quoteText, category: quoteCategory });
+            saveQuotes();
             alert("Quote added!");
             
             // Clear the input fields
@@ -43,6 +52,33 @@ function createAddQuoteForm() {
             alert("Please fill in both fields.");
         }
     });
+
+    // Adding event listener for exporting quotes
+    document.getElementById('exportQuotes').addEventListener('click', exportQuotes);
+}
+
+// Function to export quotes to a JSON file
+function exportQuotes() {
+    const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'quotes.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// Function to import quotes from a JSON file
+function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(event) {
+        const importedQuotes = JSON.parse(event.target.result);
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        alert('Quotes imported successfully!');
+        showRandomQuote();
+    };
+    fileReader.readAsText(event.target.files[0]);
 }
 
 // Attach event listener to the button to show a new quote
@@ -53,6 +89,64 @@ createAddQuoteForm();
 
 // Show an initial random quote when the page loads
 showRandomQuote();
+
+
+// Task 0
+// // Define an array to store quote objects
+// let quotes = [
+//     { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", category: "inspirational" },
+//     { text: "The way to get started is to quit talking and begin doing.", category: "motivational" },
+//     { text: "Life is what happens when you're busy making other plans.", category: "life" },
+//     { text: "You only live once, but if you do it right, once is enough.", category: "life" }
+// ];
+
+// // Function to display a random quote
+// function showRandomQuote() {
+//     const quoteDisplay = document.getElementById('quoteDisplay');
+//     const randomIndex = Math.floor(Math.random() * quotes.length);
+//     const randomQuote = quotes[randomIndex];
+//     quoteDisplay.innerHTML = `<p>"${randomQuote.text}"</p><p><em>- ${randomQuote.category}</em></p>`;
+// }
+
+// // Function to create a form to add a new quote
+// function createAddQuoteForm() {
+//     const formContainer = document.createElement('div');
+//     formContainer.innerHTML = `
+//         <h3>Add a New Quote</h3>
+//         <input type="text" id="quoteText" placeholder="Enter your quote" required>
+//         <input type="text" id="quoteCategory" placeholder="Enter category" required>
+//         <button id="addQuote">Add Quote</button>
+//     `;
+    
+//     document.body.appendChild(formContainer);
+
+//     // Adding event listener to the "Add Quote" button
+//     document.getElementById('addQuote').addEventListener('click', () => {
+//         const quoteText = document.getElementById('quoteText').value;
+//         const quoteCategory = document.getElementById('quoteCategory').value;
+
+//         if (quoteText && quoteCategory) {
+//             // Add the new quote to the quotes array
+//             quotes.push({ text: quoteText, category: quoteCategory });
+//             alert("Quote added!");
+            
+//             // Clear the input fields
+//             document.getElementById('quoteText').value = '';
+//             document.getElementById('quoteCategory').value = '';
+//         } else {
+//             alert("Please fill in both fields.");
+//         }
+//     });
+// }
+
+// // Attach event listener to the button to show a new quote
+// document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+
+// // Call the function to create the add quote form
+// createAddQuoteForm();
+
+// // Show an initial random quote when the page loads
+// showRandomQuote();
 
 
 // // Array of quote objects
