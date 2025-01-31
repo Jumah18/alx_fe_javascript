@@ -239,6 +239,7 @@ showRandomQuote();
 
 // On God
 // ["method", "POST", "headers", "Content-Type"]
+// ["setInterval"]
 
 
 
