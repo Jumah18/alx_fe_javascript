@@ -240,6 +240,7 @@ showRandomQuote();
 // On God
 // ["method", "POST", "headers", "Content-Type"]
 // ["setInterval"]
+// ["Quotes synced with server!"]
 
 
 
